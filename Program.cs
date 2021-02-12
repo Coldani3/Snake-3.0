@@ -8,17 +8,22 @@ namespace snake_30
     class Program
     {
         public static bool Running = true;
-        public static Renderer Renderer = new Renderer();
-        public static Logic Logic = new Logic();
-        //How many times a second the snake moves forwards.
         public static int TickRate = 3;
-        public static List<Food> Food = new List<Food>();
-        public static readonly Snake PlayerSnake = GenerateSnake();
+        public static readonly int WindowHeight = 40;
+        public static readonly int WindowWidth = 70;
         //Singleton with the RNG so I don't need to create multiple Random objects over and over throughout the program
         public static readonly Random RNG = new Random();
+        public static Renderer Renderer = new Renderer();
+        public static Logic Logic = new Logic();
+        public static List<Food> Food = new List<Food>();
+        //How many times a second the snake moves forwards.
+        
+        public static readonly Snake PlayerSnake = GenerateSnake();
         
         static void Main(string[] args)
         {
+            Console.SetWindowSize(WindowWidth, WindowHeight);
+            Console.CursorVisible = false;
             //Logic thread
             Task logicThread = new Task(() => { 
                 while (Running)

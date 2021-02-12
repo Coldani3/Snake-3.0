@@ -43,10 +43,12 @@ namespace snake_30
             //check collisions
             foreach (Food food in Program.Food)
             {
-                if (food.X == head.X + xChange && food.Y == head.Y + yChange)
-                {
-                    Program.Logic.GameOver();
-                }
+                if (food.X == head.X + xChange && food.Y == head.Y + yChange) Program.Logic.GameOver();
+            }
+
+            for (int i = 1; i < this.Pieces.Count; i++)
+            {
+                if (head.X == this.Pieces[i].X && head.Y == this.Pieces[i].Y) Program.Logic.GameOver();
             }
 
             //first, update the previous coords
