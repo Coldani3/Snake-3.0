@@ -11,7 +11,8 @@ namespace snake_30
 
         public void RenderAll()
         {
-
+            Console.Clear();
+            
         }
 
         public void RenderSnake(Snake snake)
