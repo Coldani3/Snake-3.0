@@ -24,6 +24,8 @@ namespace snake_30
         {
             Console.SetWindowSize(WindowWidth, WindowHeight);
             Console.CursorVisible = false;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
             //Logic thread
             Task logicThread = new Task(() => { 
                 while (Running)
@@ -80,8 +82,8 @@ namespace snake_30
             //make them between 1 third and three thirds
             //'1 +' is because RNG.Next's max value is exclusive rather than inclusive, and we want to
             //include the upper third
-            int x = RNG.Next(Console.WindowWidth / 3, 1 + (Console.WindowWidth / 3) * 2);
-            int y = RNG.Next(Console.WindowHeight / 3, 1 + (Console.WindowHeight / 3) * 2);
+            int x = RNG.Next(Program.WindowWidth / 3, 1 + (Program.WindowWidth / 3) * 2);
+            int y = RNG.Next(Program.WindowHeight / 3, 1 + (Program.WindowHeight / 3) * 2);
             return new Snake(x, y);
         }
     }
