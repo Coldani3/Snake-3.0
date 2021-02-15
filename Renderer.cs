@@ -5,7 +5,13 @@ namespace snake_30
 {
     public class Renderer
     {
-        private List<int> LinesDrawnTo = new List<int>();
+        //if first value of int[] is not ClearMultiCharFlag, it is the x and y of the char to clear.
+        //otherwise, it is {ClearMultiCharFlag, x, y, and number of chars to clear}
+        private List<int[]> ToClear = new List<int[]>();
+        private readonly int ClearMultiCharFlag = Int32.MaxValue - 10;
+        //creating strings every frame is expensive so we cache them. first is length, second is the clear string
+        private Dictionary<int, string> ClearStringCache = new Dictionary<int, string>();
+
         public Renderer()
         {
 
@@ -53,10 +59,11 @@ namespace snake_30
         //big deal as this is the one exception to the structure
         public void RenderScore()
         {
-            Console.SetCursorPosition(Console.WindowWidth - 5, 0);
+            string playerScoreText = $"{Program.PlayerSnake.Pieces.Count - 1}";
+            Console.SetCursorPosition(Console.WindowWidth - 5, 1);
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write(Program.PlayerSnake.Pieces.Count - 1);
-            this.LinesDrawnTo.Add(0);
+            Console.Write(playerScoreText);
+            this.ToClear.Add(new int[] {ClearMultiCharFlag, Console.WindowWidth - 5, 1, playerScoreText.Length});
         }
 
         public void RenderDebugLog()
@@ -66,17 +73,35 @@ namespace snake_30
                 int drawY = Console.WindowHeight - Program.DebugLogStack.Count + i;
                 Console.SetCursorPosition(0, drawY);
                 Console.Write(Program.DebugLogStack[i]);
-                this.LinesDrawnTo.Add(drawY);
+                this.ToClear.Add(new int[] {ClearMultiCharFlag, 0, drawY, Program.DebugLogStack[i].Length});
             }
         }
 
         public void ClearScreen()
         {
             //NOTE: if it's not clearing properly, check the line you added to the list was the SCREEN Y and not the game y
-            foreach (int toClearLine in this.LinesDrawnTo)
+            foreach (int[] toClearLine in this.ToClear)
             {
-                Console.SetCursorPosition(0, toClearLine);
-                Console.Write(new String(' ', Program.WindowWidth));
+                if (toClearLine[0] == ClearMultiCharFlag)
+                { 
+                    Console.SetCursorPosition(toClearLine[1], toClearLine[2]);
+                    String clearLine;
+                    if (!ClearStringCache.ContainsKey(toClearLine[3])) 
+                    {
+                        clearLine = new String(' ', toClearLine[3]);
+                        ClearStringCache.Add(toClearLine[3], clearLine);
+                    }
+                    else
+                    {
+                        clearLine = ClearStringCache[toClearLine[3]];
+                    }
+                    Console.Write(clearLine);
+                }
+                else 
+                {
+                    Console.SetCursorPosition(toClearLine[0], toClearLine[1]);
+                    Console.Write(' ');
+                }
             }
         }
 
@@ -88,7 +113,7 @@ namespace snake_30
             if (Console.ForegroundColor != drawable.DrawColour) Console.ForegroundColor = drawable.DrawColour;
             
             Console.Write(drawable.DrawCharacter);
-            this.LinesDrawnTo.Add(drawY);
+            this.ToClear.Add(new int[] {gameX, drawY});
         }
 
         public int GameYToScreenY(int gameY)

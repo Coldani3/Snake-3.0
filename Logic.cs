@@ -50,8 +50,8 @@ namespace snake_30
             int toGenerate = Program.RNG.Next(2, 4);
             for (int i = 0; i <= toGenerate; i++)
             {
-                int randX = Program.RNG.Next(0, Program.WindowWidth);
-                int randY = Program.RNG.Next(0, Program.WindowHeight);
+                int randX = Program.RNG.Next(4, Program.WindowWidth - 4);
+                int randY = Program.RNG.Next(4, Program.WindowHeight - 4);
 
                 if (!Program.PlayerSnake.AnyPieceAtCoords(randX, randY) && !this.IsFoodAtLocation(randX, randY)) 
                     Program.Food.Add(new Food(randX, randY));
