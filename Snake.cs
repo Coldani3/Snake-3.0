@@ -44,7 +44,6 @@ namespace snake_30
 
             if (!prevCoordAvailable)
             {
-                Program.DebugLog("Failed last coordinate Grow!");
                 //first, attempt to infer the orientation of the last and second to last piece and continue on from that.
                 SnakeComponent lastPiece = this.Pieces[this.Pieces.Count - 1];
                 SnakeComponent sToLastPiece = this.Pieces[this.Pieces.Count - 2];
@@ -64,7 +63,6 @@ namespace snake_30
 
                 if (this.AnyPieceAtCoords(newPieceX, newPieceY))
                 {
-                    Program.DebugLog("Failed orientation infer Grow!");
                     //failing that, go by the facing of the head. 
                     int facingInt = (int) head.Facing;    
                     int yChange = facingInt < 2 ? (facingInt == 0 ? 1 : -1) : 0;
@@ -94,7 +92,6 @@ namespace snake_30
                         if (validCoords == null)
                         {
                             //the thing I'll think of
-                            Program.DebugLog("Failed clockwise Grow");
                         }
                         else
                         {
@@ -105,7 +102,6 @@ namespace snake_30
                 }
             }
 
-            Program.DebugLog("Added piece!");
             this.Pieces.Add(new SnakeBody(newPieceX, newPieceY));
         }
 
@@ -119,20 +115,27 @@ namespace snake_30
 
         public void ChangeDirection(Direction newDirection)
         {
-            ((SnakeHead) this.Pieces[0]).Facing = newDirection;
+            SnakeHead head = ((SnakeHead) this.Pieces[0]);
+            int[] newDirChanges = Utillity.GetCoordDiffByDirection(newDirection);
+            if (this.Pieces.Count > 1)
+            {
+                if (head.X + newDirChanges[0] != this.Pieces[1].X && head.Y + newDirChanges[1] != this.Pieces[1].Y) 
+                    head.Facing = newDirection;
+            }
+            else head.Facing = newDirection;
         }
         
         public void MoveForward()
         {
-            Program.DebugLog("Beginning move!");
             SnakeHead head = (SnakeHead) this.Pieces[0];
-            int xChange = head.Facing == Direction.Right ? 1 : (head.Facing == Direction.Left ? -1 : 0);
-            int yChange = head.Facing == Direction.Up ? 1 : (head.Facing == Direction.Down ? -1 : 0);
+            int[] dirChange = Utillity.GetCoordDiffByDirection(head.Facing);
+            int xChange = dirChange[0];
+            int yChange = dirChange[1];
 
             int nextHeadX = head.X + xChange;
             int nextHeadY = head.Y + yChange;
 
-            if (nextHeadX < Program.WindowWidth - 1 || nextHeadY < Program.WindowHeight - 1 || nextHeadX > 0 || nextHeadY > 0)
+            if (nextHeadX < Program.WindowWidth - 1 && nextHeadY < Program.WindowHeight && nextHeadX > 0 && nextHeadY > 0)
             {
                 //check collisions
                 //NOTE TO FUTURE ME!
@@ -143,18 +146,13 @@ namespace snake_30
                     Food food = Program.Food[i];
                     if (food.X == nextHeadX && food.Y == nextHeadY) 
                     {
-                        Program.DebugLog("Food count [start]: " + Program.Food.Count);
                         Program.Logic.EatFoodAtLocation(nextHeadX, nextHeadY, this);
-                        Program.DebugLog("Food count [end]: " + Program.Food.Count);
                     }
                 }
-
-                Program.DebugLog("Body pieces count (inclding head): " + this.Pieces.Count);
 
                 //if (this.AnyPieceAtCoords(head.X, head.Y)) Program.Logic.GameOver();
                 for (int i = 1; i < this.Pieces.Count; i++)
                 {
-                    Program.DebugLog("Checking for collision with body loop: " + i);
                     if (nextHeadX == this.Pieces[i].X && nextHeadY == this.Pieces[i].Y) Program.Logic.GameOver();
                 }
 
@@ -174,15 +172,13 @@ namespace snake_30
                 {
                     for (int i = this.Pieces.Count - 1; i > 0; i--)
                     {
-                        Program.DebugLog("Moving pieces");
                         this.Pieces[i].X = this.Pieces[i - 1].X;
                         this.Pieces[i].Y = this.Pieces[i - 1].Y;
                     }
                 }
 
-                Program.DebugLog("Moving!");
                 //finally, move the head
-                Program.DebugLog($"New Head X: {nextHeadX}, New Head Y: {nextHeadX}");
+                Program.DebugLog($"New Head X: {nextHeadX}, New Head Y: {nextHeadY}");
                 head.X = nextHeadX;
                 head.Y = nextHeadY;
             }
@@ -199,7 +195,7 @@ namespace snake_30
 
     public class SnakeHead : SnakeComponent
     {
-        public override ConsoleColor DrawColour { get => ConsoleColor.Cyan; }
+        public override ConsoleColor DrawColour { get => ConsoleColor.Green; }
         public override char DrawCharacter { get => this.GetChar(); }
         //State of the direction the head is facing
         public Direction Facing = (Direction) Program.RNG.Next(4);
@@ -230,7 +226,7 @@ namespace snake_30
 
     public class SnakeBody : SnakeComponent
     {
-        public override ConsoleColor DrawColour { get => ConsoleColor.Cyan; }
+        public override ConsoleColor DrawColour { get => ConsoleColor.Green; }
         public override char DrawCharacter { get => '■'; }
 
         public SnakeBody(int startGameX, int startGameY)

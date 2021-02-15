@@ -8,7 +8,7 @@ namespace snake_30
     class Program
     {
         public static bool Running = true;
-        public static bool Debug = true;
+        public static bool Debug = false;
         public static int TickRate = 3;
         public static readonly int WindowHeight = 40;
         public static readonly int WindowWidth = 70;
@@ -38,6 +38,7 @@ namespace snake_30
             });
             //Logic thread
             Task renderThread = new Task(() => { 
+                Console.Clear();
                 while (Running)
                 {
                     Renderer.RenderAll();

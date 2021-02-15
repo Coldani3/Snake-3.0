@@ -31,7 +31,6 @@ namespace snake_30
                     break;
                 }
             }
-            Program.DebugLog("End eating!");
         }
 
         public bool IsFoodAtLocation(int gameX, int gameY)
