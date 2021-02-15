@@ -6,7 +6,13 @@ namespace snake_30
     {
         public int X { get; set; }
         public int Y { get; set; }
-        public ConsoleColor DrawColor { get => ConsoleColor.Yellow; }
-        public char DrawCharacter { get => 'O'; }   
+        public ConsoleColor DrawColour { get => ConsoleColor.Yellow; }
+        public char DrawCharacter { get => 'O'; }
+
+        public Food(int gameStartX, int gameStartY)
+        {
+            this.X = gameStartX;
+            this.Y = gameStartY;
+        }
     }
 }

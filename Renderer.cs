@@ -12,11 +12,23 @@ namespace snake_30
 
         public void RenderAll()
         {
-            Console.Clear();
-            RenderFood(Program.Food);
-            RenderSnake(Program.PlayerSnake);
-            RenderScore();
+            if (Program.TickRate > 0)
+            {
+                Console.Clear();
+                RenderFood(Program.Food);
+                RenderSnake(Program.PlayerSnake);
+                RenderScore();
 
+                if (Program.Debug)
+                {
+                    RenderDebugLog();
+                }
+            }
+            else
+            {
+                Console.SetCursorPosition(Program.WindowWidth / 2, Program.WindowHeight);
+                Console.Write("Game over!");
+            }
         }
 
         public void RenderSnake(Snake snake)
@@ -42,6 +54,15 @@ namespace snake_30
             Console.SetCursorPosition(Console.WindowWidth - 5, 0);
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(Program.PlayerSnake.Pieces.Count - 1);
+        }
+
+        public void RenderDebugLog()
+        {
+            for (int i = 0; i < Program.DebugLogStack.Count; i++)
+            {
+                Console.SetCursorPosition(0, Console.WindowHeight - Program.DebugLogStack.Count + i);
+                Console.Write(Program.DebugLogStack[i]);
+            }
         }
 
         public void Draw(int gameX, int gameY, IDrawable drawable)

@@ -23,6 +23,8 @@ namespace snake_30
         public void Grow()
         {
             bool prevCoordAvailable = false;
+            int newPieceX = 0;
+            int newPieceY = 0;
 
             foreach (int[] coordinate in this.PreviousTailCoords)
             {
@@ -33,14 +35,16 @@ namespace snake_30
                     continue;
                 else
                 {
-                    this.Pieces.Add(new SnakeBody(coordinate[0], coordinate[1]));
+                    newPieceX = coordinate[0];
+                    newPieceY = coordinate[1];
+                    prevCoordAvailable = true;
+                    //this.Pieces.Add(new SnakeBody(coordinate[0], coordinate[1]));
                 }
             }
 
             if (!prevCoordAvailable)
             {
-                int newPieceX;
-                int newPieceY;
+                Program.DebugLog("Failed last coordinate Grow!");
                 //first, attempt to infer the orientation of the last and second to last piece and continue on from that.
                 SnakeComponent lastPiece = this.Pieces[this.Pieces.Count - 1];
                 SnakeComponent sToLastPiece = this.Pieces[this.Pieces.Count - 2];
@@ -58,40 +62,57 @@ namespace snake_30
                     newPieceY = lastPiece.Y;
                 }
 
-                //failing that, go by the facing of the head.                
-
-                //as a last resort, go for the first available position going clockwise
-                //if nothing else works, idk lol I'll think of something
-                int[][] relCoordsToTry = new int[4][] {new int[2] {0, 1}, new int[2] {1, 0}, new int[2] {0, -1}, new int[2] {-1, 0}};
-                int[] validCoords = null;
-
-                foreach (int[] toTry in relCoordsToTry)
+                if (this.AnyPieceAtCoords(newPieceX, newPieceY))
                 {
-                    if (!this.AnyPieceAtCoords(lastPiece.X + toTry[0], lastPiece.Y + toTry[1]))
+                    Program.DebugLog("Failed orientation infer Grow!");
+                    //failing that, go by the facing of the head. 
+                    int facingInt = (int) head.Facing;    
+                    int yChange = facingInt < 2 ? (facingInt == 0 ? 1 : -1) : 0;
+                    int xChange = facingInt > 1 ? (facingInt - 2 == 0 ? -1 : 1) : 0;
+
+                    if (!this.AnyPieceAtCoords(lastPiece.X + xChange, lastPiece.Y + yChange))
                     {
-                        validCoords = toTry;
-                        break;
+                        newPieceX = lastPiece.X + xChange;
+                        newPieceY = lastPiece.Y + yChange;
+                    }
+                    else
+                    {
+                        //as a last resort, go for the first available position going clockwise
+                        //if nothing else works, idk lol I'll think of something
+                        int[][] relCoordsToTry = new int[4][] {new int[2] {0, 1}, new int[2] {1, 0}, new int[2] {0, -1}, new int[2] {-1, 0}};
+                        int[] validCoords = null;
+
+                        foreach (int[] toTry in relCoordsToTry)
+                        {
+                            if (!this.AnyPieceAtCoords(lastPiece.X + toTry[0], lastPiece.Y + toTry[1]))
+                            {
+                                validCoords = toTry;
+                                break;
+                            }
+                        }
+
+                        if (validCoords == null)
+                        {
+                            //the thing I'll think of
+                            Program.DebugLog("Failed clockwise Grow");
+                        }
+                        else
+                        {
+                            newPieceX = validCoords[0];
+                            newPieceY = validCoords[1];
+                        }
                     }
                 }
-
-                if (validCoords == null)
-                {
-                    //the thing I'll think of
-                }
-                else
-                {
-                    newPieceX = validCoords[0];
-                    newPieceY = validCoords[1];
-                }
             }
+
+            Program.DebugLog("Added piece!");
+            this.Pieces.Add(new SnakeBody(newPieceX, newPieceY));
         }
 
         public bool AnyPieceAtCoords(int gameX, int gameY)
         {
-            foreach (SnakeComponent piece in this.Pieces)
-            {
+            foreach (SnakeComponent piece in this.Pieces) 
                 if (piece.X == gameX && piece.Y == gameY) return true;
-            }
 
             return false;
         }
@@ -103,6 +124,7 @@ namespace snake_30
         
         public void MoveForward()
         {
+            Program.DebugLog("Beginning move!");
             SnakeHead head = (SnakeHead) this.Pieces[0];
             int xChange = head.Facing == Direction.Right ? 1 : (head.Facing == Direction.Left ? -1 : 0);
             int yChange = head.Facing == Direction.Up ? 1 : (head.Facing == Direction.Down ? -1 : 0);
@@ -110,17 +132,30 @@ namespace snake_30
             int nextHeadX = head.X + xChange;
             int nextHeadY = head.Y + yChange;
 
-            if (!(nextHeadX > Program.WindowWidth || nextHeadY > Program.WindowHeight || nextHeadX < 0 || nextHeadY < 0))
+            if (nextHeadX < Program.WindowWidth - 1 || nextHeadY < Program.WindowHeight - 1 || nextHeadX > 0 || nextHeadY > 0)
             {
                 //check collisions
-                foreach (Food food in Program.Food)
+                //NOTE TO FUTURE ME!
+                //It appears doing this loop with a foreach causes the Logic thread to crash
+                //as Enumerators don't like it when the thing they are enumerating changes.
+                for (int i = 0; i < Program.Food.Count; i++)
                 {
-                    if (food.X == nextHeadX && food.Y == nextHeadY) Program.Logic.EatFoodAtLocation(nextHeadX, nextHeadY, this);
+                    Food food = Program.Food[i];
+                    if (food.X == nextHeadX && food.Y == nextHeadY) 
+                    {
+                        Program.DebugLog("Food count [start]: " + Program.Food.Count);
+                        Program.Logic.EatFoodAtLocation(nextHeadX, nextHeadY, this);
+                        Program.DebugLog("Food count [end]: " + Program.Food.Count);
+                    }
                 }
 
+                Program.DebugLog("Body pieces count (inclding head): " + this.Pieces.Count);
+
+                //if (this.AnyPieceAtCoords(head.X, head.Y)) Program.Logic.GameOver();
                 for (int i = 1; i < this.Pieces.Count; i++)
                 {
-                    if (head.X == this.Pieces[i].X && head.Y == this.Pieces[i].Y) Program.Logic.GameOver();
+                    Program.DebugLog("Checking for collision with body loop: " + i);
+                    if (nextHeadX == this.Pieces[i].X && nextHeadY == this.Pieces[i].Y) Program.Logic.GameOver();
                 }
 
                 //first, update the previous coords
@@ -139,14 +174,17 @@ namespace snake_30
                 {
                     for (int i = this.Pieces.Count - 1; i > 0; i--)
                     {
+                        Program.DebugLog("Moving pieces");
                         this.Pieces[i].X = this.Pieces[i - 1].X;
                         this.Pieces[i].Y = this.Pieces[i - 1].Y;
                     }
                 }
 
+                Program.DebugLog("Moving!");
                 //finally, move the head
-                head.X = head.X + xChange;
-                head.Y = head.Y + yChange;
+                Program.DebugLog($"New Head X: {nextHeadX}, New Head Y: {nextHeadX}");
+                head.X = nextHeadX;
+                head.Y = nextHeadY;
             }
         }
     }
@@ -155,13 +193,13 @@ namespace snake_30
     {
         public int X { get; set; }
         public int Y { get; set; }
-        public abstract ConsoleColor DrawColor { get; }
+        public abstract ConsoleColor DrawColour { get; }
         public abstract char DrawCharacter { get; }
     }
 
     public class SnakeHead : SnakeComponent
     {
-        public override ConsoleColor DrawColor { get => ConsoleColor.Cyan; }
+        public override ConsoleColor DrawColour { get => ConsoleColor.Cyan; }
         public override char DrawCharacter { get => this.GetChar(); }
         //State of the direction the head is facing
         public Direction Facing = (Direction) Program.RNG.Next(4);
@@ -192,7 +230,7 @@ namespace snake_30
 
     public class SnakeBody : SnakeComponent
     {
-        public override ConsoleColor DrawColor { get => ConsoleColor.Cyan; }
+        public override ConsoleColor DrawColour { get => ConsoleColor.Cyan; }
         public override char DrawCharacter { get => '■'; }
 
         public SnakeBody(int startGameX, int startGameY)

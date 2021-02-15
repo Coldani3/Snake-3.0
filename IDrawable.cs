@@ -4,7 +4,7 @@ namespace snake_30
 {
     public interface IDrawable
     {
-        ConsoleColor DrawColour { get => ConsoleColor.White; }
+        ConsoleColor DrawColour { get; }
         char DrawCharacter { get; }
     }
 }

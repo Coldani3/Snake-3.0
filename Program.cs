@@ -8,6 +8,7 @@ namespace snake_30
     class Program
     {
         public static bool Running = true;
+        public static bool Debug = true;
         public static int TickRate = 3;
         public static readonly int WindowHeight = 40;
         public static readonly int WindowWidth = 70;
@@ -16,6 +17,7 @@ namespace snake_30
         public static Renderer Renderer = new Renderer();
         public static Logic Logic = new Logic();
         public static List<Food> Food = new List<Food>();
+        public static List<string> DebugLogStack = new List<string>();
         //How many times a second the snake moves forwards.
         
         public static readonly Snake PlayerSnake = GenerateSnake();
@@ -85,6 +87,16 @@ namespace snake_30
             int x = RNG.Next(Program.WindowWidth / 3, 1 + (Program.WindowWidth / 3) * 2);
             int y = RNG.Next(Program.WindowHeight / 3, 1 + (Program.WindowHeight / 3) * 2);
             return new Snake(x, y);
+        }
+
+        public static void DebugLog(string message)
+        {
+            if (DebugLogStack.Count > 8)
+            {
+                DebugLogStack.RemoveAt(0);
+            }
+
+            DebugLogStack.Add($"[{System.DateTime.Now.ToLocalTime()}] " + message);
         }
     }
 }
