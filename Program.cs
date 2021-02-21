@@ -31,8 +31,8 @@ namespace snake_30
             // IMPORTANT ASSIGNMENT NOTES:
             /*
             To my knowledge I have not used any external code sources, aside from perhaps referencing previous works of mine (which may
-            have used external code sources). Only possible external source I might have used solely as a reminder is the following link 
-            for the Tasks, but I did not copy any of the code from it.
+            have used external code sources). The only possible external source I might have used solely as a reminder is the following 
+            link for the Tasks, but I did not copy any of the code from it.
             https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0
             At this point I've more or less memorised the basic usage of Task though.
             */
