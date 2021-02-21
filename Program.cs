@@ -53,6 +53,8 @@ namespace snake_30
             inputThread.Start();
 
             while (Running);
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("End game!");
             //end program
             Console.ReadKey(true);
         }

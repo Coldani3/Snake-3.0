@@ -15,6 +15,11 @@ namespace snake_30
         {
             //Program.TickRate = 0;
             Program.Running = false;
+            //forgive me father for I have sinned
+            System.Console.Clear();
+            System.Console.SetCursorPosition(Program.WindowWidth / 2 - 5, Program.WindowHeight / 2);
+            System.Console.Write("Game over!");
+            System.Console.ReadKey(true);
         }
 
         public void EatFoodAtLocation(int foodGameX, int foodGameY, Snake snakeEating)

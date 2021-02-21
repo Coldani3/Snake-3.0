@@ -103,6 +103,8 @@ namespace snake_30
                     Console.Write(' ');
                 }
             }
+
+            this.ToClear.Clear();
         }
 
         public void Draw(int gameX, int gameY, IDrawable drawable)
