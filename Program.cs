@@ -13,6 +13,10 @@ namespace snake_30
         public static readonly int WindowHeight = 40;
         public static readonly int WindowWidth = 70;
         //Singleton with the RNG so I don't need to create multiple Random objects over and over throughout the program
+        /*
+        Doing this without a Singleton would mean repeated creation of Random objects in each of Logic and Renderer, which, while not
+        particularly impactful of the performance of the program, would be repeating the same code more than once and lead to confusion.
+        */
         public static readonly Random RNG = new Random();
         public static Renderer Renderer = new Renderer();
         public static Logic Logic = new Logic();
@@ -24,6 +28,14 @@ namespace snake_30
         
         static void Main(string[] args)
         {
+            // IMPORTANT ASSIGNMENT NOTES:
+            /*
+            To my knowledge I have not used any external code sources, aside from perhaps referencing previous works of mine (which may
+            have used external code sources). Only possible external source I might have used solely as a reminder is the following link 
+            for the Tasks, but I did not copy any of the code from it.
+            https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0
+            At this point I've more or less memorised the basic usage of Task though.
+            */
             Console.SetWindowSize(WindowWidth, WindowHeight);
             Console.CursorVisible = false;
             Console.BackgroundColor = ConsoleColor.Black;
@@ -36,7 +48,7 @@ namespace snake_30
                     Thread.Sleep((int) Math.Floor(1000 / TickRate));
                 }
             });
-            //Logic thread
+            //Rendering thread
             Task renderThread = new Task(() => { 
                 Console.Clear();
                 while (Running)

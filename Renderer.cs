@@ -21,7 +21,6 @@ namespace snake_30
         {
             if (Program.TickRate > 0)
             {
-                //Console.Clear();
                 ClearScreen();
                 RenderFood(Program.Food);
                 RenderSnake(Program.PlayerSnake);

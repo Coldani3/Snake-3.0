@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace snake_30
 {
-    //Facade that represents the entire snake
+    //Facade that represents the entire snake.
+    /*
+    Without using a Facade I would have to keep track of the head and tail in separate objects, wasting space and making it
+    tougher to move the whole snake, whereas this way I can move all the pieces forward with one call.
+    */
     public class Snake
     {
         //Snake head will always be the first (0th) element
@@ -184,6 +188,7 @@ namespace snake_30
             }
             else
             {
+                //Game over if you crash into a wall
                 Program.Logic.GameOver();
             }
         }
@@ -202,6 +207,10 @@ namespace snake_30
         public override ConsoleColor DrawColour { get => ConsoleColor.Green; }
         public override char DrawCharacter { get => this.GetChar(); }
         //State of the direction the head is facing
+        /*
+        Using a State makes tracking the orientation of the Snake's head much easier. Rather than having to calculate it based on
+        the previous coordinate, we can just change the Direction and have the Snake move based on that.
+        */
         public Direction Facing = (Direction) Program.RNG.Next(4);
         public SnakeHead(int startGameX, int startGameY)
         {
