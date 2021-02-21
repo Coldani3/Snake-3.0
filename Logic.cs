@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace snake_30
 {
     public class Logic
@@ -18,6 +16,7 @@ namespace snake_30
             //forgive me father for I have sinned
             System.Console.Clear();
             System.Console.SetCursorPosition(Program.WindowWidth / 2 - 5, Program.WindowHeight / 2);
+            System.Console.ForegroundColor = System.ConsoleColor.White;
             System.Console.Write("Game over!");
             System.Console.ReadKey(true);
         }
@@ -32,7 +31,7 @@ namespace snake_30
                     Program.Food.Remove(food);
                     snakeEating.Grow();
                     //make the snake move faster
-                    Program.TickRate++;
+                    Program.TickRate += 0.25f;
                     break;
                 }
             }

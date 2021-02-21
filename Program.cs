@@ -9,7 +9,7 @@ namespace snake_30
     {
         public static bool Running = true;
         public static bool Debug = false;
-        public static int TickRate = 3;
+        public static float TickRate = 3;
         public static readonly int WindowHeight = 40;
         public static readonly int WindowWidth = 70;
         //Singleton with the RNG so I don't need to create multiple Random objects over and over throughout the program
@@ -33,7 +33,7 @@ namespace snake_30
                 while (Running)
                 {
                     Logic.Tick();
-                    Thread.Sleep(1000 / TickRate);
+                    Thread.Sleep((int) Math.Floor(1000 / TickRate));
                 }
             });
             //Logic thread
@@ -42,7 +42,7 @@ namespace snake_30
                 while (Running)
                 {
                     Renderer.RenderAll();
-                    Thread.Sleep(1000 / TickRate);
+                    Thread.Sleep((int) Math.Floor(1000 / TickRate));
                 }
             });
             //Input thread setup

@@ -182,6 +182,10 @@ namespace snake_30
                 head.X = nextHeadX;
                 head.Y = nextHeadY;
             }
+            else
+            {
+                Program.Logic.GameOver();
+            }
         }
     }
 
