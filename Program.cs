@@ -9,21 +9,16 @@ namespace snake_30
     {
         public static bool Running = true;
         public static bool Debug = false;
+        //How many times a second the snake moves forwards.
         public static float TickRate = 3;
         public static readonly int WindowHeight = 40;
         public static readonly int WindowWidth = 70;
-        //Singleton with the RNG so I don't need to create multiple Random objects over and over throughout the program
-        /*
-        Doing this without a Singleton would mean repeated creation of Random objects in each of Logic and Renderer, which, while not
-        particularly impactful of the performance of the program, would be repeating the same code more than once and lead to confusion.
-        */
-        public static readonly Random RNG = new Random();
-        public static Renderer Renderer = new Renderer();
-        public static Logic Logic = new Logic();
+		public static readonly Random RNG = new Random();
+        //Singletons as various things need to access these throughout the program.
+        public static Renderer Renderer = Renderer.GetInstance();
+        public static Logic Logic = Logic.GetInstance();
         public static List<Food> Food = new List<Food>();
         public static List<string> DebugLogStack = new List<string>();
-        //How many times a second the snake moves forwards.
-        
         public static readonly Snake PlayerSnake = GenerateSnake();
         
         static void Main(string[] args)
@@ -41,7 +36,7 @@ namespace snake_30
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             //Logic thread
-            Task logicThread = new Task(() => { 
+            Task logicThread = new Task(() => {
                 while (Running)
                 {
                     Logic.Tick();

@@ -11,11 +11,9 @@ namespace snake_30
         private readonly int ClearMultiCharFlag = Int32.MaxValue - 10;
         //creating strings every frame is expensive so we cache them. first is length, second is the clear string
         private Dictionary<int, string> ClearStringCache = new Dictionary<int, string>();
+		private static readonly Renderer Instance = new Renderer();
 
-        public Renderer()
-        {
-
-        }
+		private Renderer() {}
 
         public void RenderAll()
         {
@@ -111,7 +109,10 @@ namespace snake_30
             int drawY = GameYToScreenY(gameY);
             Console.SetCursorPosition(gameX, drawY);
 
-            if (Console.ForegroundColor != drawable.DrawColour) Console.ForegroundColor = drawable.DrawColour;
+            if (Console.ForegroundColor != drawable.DrawColour) 
+			{
+				Console.ForegroundColor = drawable.DrawColour;
+			}
             
             Console.Write(drawable.DrawCharacter);
             this.ToClear.Add(new int[] {gameX, drawY});
@@ -121,5 +122,10 @@ namespace snake_30
         {
             return Console.WindowHeight - gameY;
         }
+
+		public static Renderer GetInstance()
+		{
+			return Instance;
+		}
     }
 }

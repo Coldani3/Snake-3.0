@@ -2,9 +2,15 @@ namespace snake_30
 {
     public class Logic
     {
+		private readonly Logic Instance = new Logic();
+
+		private Logic() {}
         public void Tick()
         {
-            if (Program.Food.Count <= 0) this.GenerateFood();
+            if (Program.Food.Count <= 0) 
+			{
+				this.GenerateFood();
+			}
             Program.PlayerSnake.MoveForward();
             Program.DebugLog("End tick!");
         }
@@ -21,7 +27,7 @@ namespace snake_30
             System.Console.ReadKey(true);
         }
 
-        public void EatFoodAtLocation(int foodGameX, int foodGameY, Snake snakeEating)
+        public void EatFoodAtLocation(int foodGameX, int foodGameY, SnakeController snakeEating)
         {
             foreach (Food food in Program.Food)
             {
@@ -41,7 +47,10 @@ namespace snake_30
         {
             foreach (Food food in Program.Food)
             {
-                if (food.X == gameX && food.Y == gameY) return true;
+                if (food.X == gameX && food.Y == gameY) 
+				{
+					return true;
+				}
             }
 
             return false;
@@ -58,10 +67,20 @@ namespace snake_30
                 int randY = Program.RNG.Next(4, Program.WindowHeight - 4);
 
                 if (!Program.PlayerSnake.AnyPieceAtCoords(randX, randY) && !this.IsFoodAtLocation(randX, randY)) 
+				{
                     Program.Food.Add(new Food(randX, randY));
+				}
                 //minus i so it effectively doesn't go down in this case
-                else i--;
+                else 
+				{
+					i--;
+				}
             }
         }
+
+		public Logic GetInstance()
+		{
+			return Instance;
+		}
     }
 }

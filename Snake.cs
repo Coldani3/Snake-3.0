@@ -8,16 +8,44 @@ namespace snake_30
     Without using a Facade I would have to keep track of the head and tail in separate objects, wasting space and making it
     tougher to move the whole snake, whereas this way I can move all the pieces forward with one call.
     */
-    public class Snake
+	public class Snake
+	{
+		SnakeController Controller;
+		public List<SnakeComponent> Pieces { get => this.Controller.Pieces; }
+		public Snake(int headStartGameX, int headStartGameY)
+		{
+			this.Controller = new SnakeController(headStartGameX, headStartGameY);
+		}
+		public void Grow()
+		{
+			this.Controller.Grow();
+		}
+
+		public void ChangeDirection(Direction direction)
+		{
+			this.Controller.ChangeDirection(direction);
+		}
+
+		public void MoveForward()
+		{
+			this.Controller.MoveForward();
+		}
+
+		public bool AnyPieceAtCoords(int gameX, int gameY)
+		{
+			return this.Controller.AnyPieceAtCoords(gameX, gameY);
+		}
+	}
+    public class SnakeController
     {
         //Snake head will always be the first (0th) element
         //We can also cast these to the appropriate pieces
-        public List<SnakeComponent> Pieces;
+        public List<SnakeComponent> Pieces { get; protected set; }
         //Used to inform extensions of the snake where they should appear first. First coord is the first tried addition,
         //second is the second tried. Failing that, it will search for any available spots.
         public int[][] PreviousTailCoords = new int[2][];
 
-        public Snake(int headStartGameX, int headStartGameY)
+        public SnakeController(int headStartGameX, int headStartGameY)
         {
             //initialise head and put it in its place
             this.Pieces = new List<SnakeComponent>() {new SnakeHead(headStartGameX, headStartGameY)};
