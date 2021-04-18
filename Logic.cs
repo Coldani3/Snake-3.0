@@ -2,7 +2,7 @@ namespace snake_30
 {
     public class Logic
     {
-		private readonly Logic Instance = new Logic();
+		private static readonly Logic Instance = new Logic();
 
 		private Logic() {}
         public void Tick()
@@ -78,7 +78,7 @@ namespace snake_30
             }
         }
 
-		public Logic GetInstance()
+		public static Logic GetInstance()
 		{
 			return Instance;
 		}
